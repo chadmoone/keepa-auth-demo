@@ -3,19 +3,24 @@ Doorkeeper.configure do
   orm :active_record
 
   # This block will be called to check whether the resource owner is authenticated or not.
-  resource_owner_authenticator do
-    User.find_by_id(session[:user_id]) || redirect_to(new_session_url)
+  resource_owner_authenticator do |routes|
     # Put your resource owner authentication logic here.
-    # Example implementation:
-    #   User.find_by_id(session[:user_id]) || redirect_to(new_user_session_url)
+    # If you want to use named routes from your app you need
+    # to call them on routes object eg.
+    # routes.new_user_session_path
+    puts "--resource_owner_authenticator\n--"
+    puts current_user
+    current_user || warden.authenticate!(:scope => :user)
   end
 
   # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
-  # admin_authenticator do
-  #   # Put your admin authentication logic here.
-  #   # Example implementation:
-  #   Admin.find_by_id(session[:admin_id]) || redirect_to(new_admin_session_url)
-  # end
+  admin_authenticator do
+    # Put your admin authentication logic here.
+    # Example implementation:
+    puts "--admin_authenticator\n--"
+    puts current_user
+    current_user || warden.authenticate!(:scope => :user)
+  end
 
   # Authorization Code expiration time (default 10 minutes).
   # authorization_code_expires_in 10.minutes
@@ -43,7 +48,7 @@ Doorkeeper.configure do
   # reuse_access_token
 
   # Issue access tokens with refresh token (disabled by default)
-  # use_refresh_token
+  use_refresh_token
 
   # Provide support for an owner to be assigned to each registered application (disabled by default)
   # Optional parameter confirmation: true (default false) if you want to enforce ownership of
@@ -114,7 +119,7 @@ Doorkeeper.configure do
   #   http://tools.ietf.org/html/rfc6819#section-4.4.2
   #   http://tools.ietf.org/html/rfc6819#section-4.4.3
   #
-  # grant_flows %w[authorization_code client_credentials]
+  grant_flows %w[authorization_code client_credentials implicit password]
 
   # Hook into the strategies' request & response life-cycle in case your
   # application needs advanced customization or logging:
