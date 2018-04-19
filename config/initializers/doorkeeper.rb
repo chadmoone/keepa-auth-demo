@@ -149,10 +149,12 @@ Doorkeeper::JWT.configure do
   # Defaults to a randomly generated token in a hash
   # { token: "RANDOM-TOKEN" }
   token_payload do |opts|
+    user = User.find(opts[:resource_owner_id])
+
     {
       user: {
-        id: 12345,
-        email: "someone@somewhere.com",
+        id: user.id,
+        email: user.email,
         iat: Time.now.to_i
       }
     }
