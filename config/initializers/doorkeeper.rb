@@ -9,7 +9,7 @@ Doorkeeper.configure do
     # to call them on routes object eg.
     # routes.new_user_session_path
     puts "--resource_owner_authenticator\n--"
-    puts current_user
+    # puts current_user
     current_user || warden.authenticate!(:scope => :user)
   end
 
@@ -18,7 +18,7 @@ Doorkeeper.configure do
     # Put your admin authentication logic here.
     # Example implementation:
     puts "--admin_authenticator\n--"
-    puts current_user.to_yaml
+    # puts current_user.to_yaml
     current_user || warden.authenticate!(:scope => :user)
   end
 
